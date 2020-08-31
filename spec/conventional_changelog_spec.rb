@@ -126,6 +126,47 @@ describe Fastlane::Actions::ConventionalChangelogAction do
       end
     end
 
+    describe 'multiline' do
+      it "should display in markdown format" do
+        commits = [
+          "feat: this is a new feature\ndocs: this is a new documentation\nstyle: this is a change in code style",
+          "test: add unit tests"
+        ]
+        allow(Fastlane::Actions::ConventionalChangelogAction).to receive(:get_commits_from_hash).and_return(commits)
+        allow(Date).to receive(:today).and_return(Date.new(2019, 5, 25))
+
+        result = "# 1.0.2 (2019-05-25)\n\n### Features\n- this is a new feature ([](/))\n\n### Testing\n- add unit tests ([](/))\n\n### Documentation\n- this is a new documentation ([](/))\n\n### Code style\n- this is a change in code style ([](/))"
+
+        expect(execute_lane_test).to eq(result)
+      end
+
+      it "should display in markdown format2" do
+        commits = [
+          "feat: this is a new feature\n  \n \ndocs: this is a new documentation\nstyle: this is a change in code style",
+          "test: add unit tests"
+        ]
+        allow(Fastlane::Actions::ConventionalChangelogAction).to receive(:get_commits_from_hash).and_return(commits)
+        allow(Date).to receive(:today).and_return(Date.new(2019, 5, 25))
+
+        result = "# 1.0.2 (2019-05-25)\n\n### Features\n- this is a new feature ([](/))\n\n### Testing\n- add unit tests ([](/))\n\n### Documentation\n- this is a new documentation ([](/))\n\n### Code style\n- this is a change in code style ([](/))"
+
+        expect(execute_lane_test).to eq(result)
+      end
+
+      it "should display in slack format" do
+        commits = [
+          "feat: this is a new feature\ndocs: this is a new documentation\nstyle: this is a change in code style",
+          "test: add unit tests"
+        ]
+        allow(Fastlane::Actions::ConventionalChangelogAction).to receive(:get_commits_from_hash).and_return(commits)
+        allow(Date).to receive(:today).and_return(Date.new(2019, 5, 25))
+
+        result = "*1.0.2 (2019-05-25)*\n\n*Features*\n- this is a new feature (</|>)\n\n*Testing*\n- add unit tests (</|>)\n\n*Documentation*\n- this is a new documentation (</|>)\n\n*Code style*\n- this is a change in code style (</|>)"
+
+        expect(execute_lane_test_slack).to eq(result)
+      end
+    end
+
     describe 'displaying a breaking change' do
       it "should display in markdown format" do
         commits = [
