@@ -5,7 +5,7 @@
 ## Getting Started
 
 ```
-fastlane add_plugin semantic_release
+fastlane add_plugin fastlane-plugin-semantic_convention_release
 ```
 
 ## About
@@ -39,7 +39,7 @@ Example:
 notes = conventional_changelog(format: 'slack', title: 'Android Alpha')
 ```
 
-<img src="https://raw.githubusercontent.com/xotahal/fastlane-plugin-semantic_release/master/docs/Changelog.png" />
+<img src="https://raw.githubusercontent.com/xotahal/-plugin-semantic_release/master/docs/Changelog.png" />
 
 ### `analyze_commits`
 
