@@ -177,21 +177,20 @@ module Fastlane
         # %s|%b|%H|%h|%an|%at
         format_pattern = lane_context[SharedValues::CONVENTIONAL_CHANGELOG_ACTION_FORMAT_PATTERN]
         commits.each do |line|
-          new_line_split = line.split("\n")
-          new_line_split.each do |split|
-            next if split.strip.empty?
-            splitted = split.split("|")
-            commit = Helper::SemanticConventionReleaseHelper.parse_commit(
-              commit_subject: splitted[0],
-              commit_body: splitted[1],
-              pattern: format_pattern
-            )
-            commit[:hash] = splitted[2]
-            commit[:short_hash] = splitted[3]
-            commit[:author_name] = splitted[4]
-            commit[:commit_date] = splitted[5]
-            parsed.push(commit)
-          end
+          splitted = line.split("|")
+
+          commit = Helper::SemanticConventionReleaseHelper.parse_commit(
+            commit_subject: splitted[0],
+            commit_body: splitted[1],
+            pattern: format_pattern
+          )
+
+          commit[:hash] = splitted[2]
+          commit[:short_hash] = splitted[3]
+          commit[:author_name] = splitted[4]
+          commit[:commit_date] = splitted[5]
+
+          parsed.push(commit)
         end
         parsed
       end
