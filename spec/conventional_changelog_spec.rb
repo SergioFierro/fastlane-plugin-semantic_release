@@ -227,6 +227,33 @@ describe Fastlane::Actions::ConventionalChangelogAction do
       end
     end
 
+    describe 'hiding commits with skip:' do
+      commits = [
+        "docs: sub|body|long_hash|short_hash|Jiri Otahal|time",
+        "fix: sub||long_hash|short_hash|Jiri Otahal|time",
+        "style: test",
+        "skip: this should be skipped"
+      ]
+
+      it "should hide in markdown format" do
+        allow(Fastlane::Actions::ConventionalChangelogAction).to receive(:get_commits_from_hash).and_return(commits)
+        allow(Date).to receive(:today).and_return(Date.new(2019, 5, 25))
+
+        result = "# 1.0.2 (2019-05-25)\n\n### Bug fixes\n- sub ([short_hash](/long_hash))\n\n### Documentation\n- sub ([short_hash](/long_hash))\n\n### Code style\n- test ([](/))"
+
+        expect(execute_lane_test).to eq(result)
+      end
+
+      it "should hide in Slack format" do
+        allow(Fastlane::Actions::ConventionalChangelogAction).to receive(:get_commits_from_hash).and_return(commits)
+        allow(Date).to receive(:today).and_return(Date.new(2019, 5, 25))
+
+        result = "*1.0.2 (2019-05-25)*\n\n*Bug fixes*\n- sub (</long_hash|short_hash>)\n\n*Documentation*\n- sub (</long_hash|short_hash>)\n\n*Code style*\n- test (</|>)"
+
+        expect(execute_lane_test_slack).to eq(result)
+      end
+    end
+  
     describe "commit format" do
       format_pattern = /^prefix-(foo|bar|baz)(?:\.(.*))?(): (.*)/
       commits = [

@@ -118,7 +118,9 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
       commits = [
         "docs: ...|",
         "chore: ...|",
-        "refactor: ...|"
+        "refactor: ...|",
+        "style: ...|",
+        "skip: ...|"
       ]
       test_analyze_commits(commits)
 
