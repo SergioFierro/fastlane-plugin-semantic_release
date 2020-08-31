@@ -1,1 +1,1 @@
-module Fastlane module SemanticConventionRelease VERSION = "1.0.0" end end
+module Fastlane module SemanticConventionRelease VERSION = "1.0.1" end end
