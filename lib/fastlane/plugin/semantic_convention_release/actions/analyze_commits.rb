@@ -91,6 +91,10 @@ module Fastlane
         releases = params[:releases]
 
         format_pattern = lane_context[SharedValues::CONVENTIONAL_CHANGELOG_ACTION_FORMAT_PATTERN]
+
+        patch_updated = false
+        minor_updated = false
+        major_updated = false
         splitted.each do |line|
           parts = line.split("|")
           subject = parts[0].strip
@@ -111,15 +115,18 @@ module Fastlane
             next if scopes_to_ignore.include?(scope) #=> true
           end
 
-          if commit[:release] == "major" || commit[:is_breaking_change]
+          if (commit[:release] == "major" || commit[:is_breaking_change]) && !major_updated
             next_major += 1
             next_minor = 0
             next_patch = 0
-          elsif commit[:release] == "minor"
+            major_updated = true
+          elsif commit[:release] == "minor" && !major_updated && !minor_updated
             next_minor += 1
             next_patch = 0
-          elsif commit[:release] == "patch"
+            minor_updated = minor_updated
+          elsif commit[:release] == "patch" && !major_updated && !minor_updated && !patch_updated
             next_patch += 1
+            patch_updated = true
           end
 
           next_version = "#{next_major}.#{next_minor}.#{next_patch}"
@@ -127,7 +134,6 @@ module Fastlane
         end
 
         next_version = "#{next_major}.#{next_minor}.#{next_patch}"
-
         is_next_version_releasable = Helper::SemanticConventionReleaseHelper.semver_gt(next_version, version)
 
         Actions.lane_context[SharedValues::RELEASE_ANALYZED] = true
@@ -171,7 +177,9 @@ module Fastlane
         )
         releases = params[:releases]
         codepush_friendly = params[:codepush_friendly]
-
+        patch_updated = false
+        minor_updated = false
+        major_updated = false
         format_pattern = lane_context[SharedValues::CONVENTIONAL_CHANGELOG_ACTION_FORMAT_PATTERN]
         splitted.each do |line|
           # conventional commits are in format
@@ -184,15 +192,18 @@ module Fastlane
             codepush_friendly: codepush_friendly
           )
 
-          if commit[:release] == "major" || commit[:is_breaking_change]
+          if (commit[:release] == "major" || commit[:is_breaking_change]) && !major_updated
             next_major += 1
             next_minor = 0
             next_patch = 0
-          elsif commit[:release] == "minor"
+            major_updated = true
+          elsif commit[:release] == "minor" && !major_updated && !minor_updated
             next_minor += 1
             next_patch = 0
-          elsif commit[:release] == "patch"
+            minor_updated = true
+          elsif commit[:release] == "patch" && !major_updated && !minor_updated && !patch_updated
             next_patch += 1
+            patch_updated = true
           end
 
           unless commit[:is_codepush_friendly]
@@ -258,13 +269,13 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :releases,
             description: "Map types of commit to release (major, minor, patch)",
-            default_value: { fix: "patch", feat: "minor" },
+            default_value: { fix: "patch", feat: "minor", BREAKING_CHANGE: "major" },
             type: Hash
           ),
           FastlaneCore::ConfigItem.new(
             key: :codepush_friendly,
             description: "These types are consider as codepush friendly automatically",
-            default_value: ["chore", "test", "docs"],
+            default_value: ["chore", "test", "docs", "style", "refactor", "perf"],
             type: Array,
             optional: true
           ),
@@ -276,7 +287,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :ignore_scopes,
             description: "To ignore certain scopes when calculating releases",
-            default_value: [],
+            default_value: ["skip"],
             type: Array,
             optional: true
           ),

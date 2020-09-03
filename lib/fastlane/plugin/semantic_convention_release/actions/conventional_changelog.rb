@@ -231,7 +231,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :order,
             description: "You can change the order of groups in release notes",
-            default_value: ["feat", "fix", "refactor", "perf", "chore", "test", "docs", "style", "no_type"],
+            default_value: ["feat", "fix", "refactor", "perf", "chore", "test", "docs", "style"],
             type: Array,
             optional: true
           ),
@@ -246,8 +246,7 @@ module Fastlane
               chore: "Building system",
               test: "Testing",
               docs: "Documentation",
-              style: "Code style",
-              no_type: "Other work"
+              style: "Code style"
             },
             type: Hash,
             optional: true

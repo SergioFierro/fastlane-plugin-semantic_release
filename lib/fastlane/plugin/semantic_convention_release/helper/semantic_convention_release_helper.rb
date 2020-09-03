@@ -7,7 +7,7 @@ module Fastlane
     class SemanticConventionReleaseHelper
       def self.format_patterns
         return {
-          "default" => /^(docs|fix|feat|chore|style|refactor|perf|test|skip)(?:\((.*)\))?(!?)\: (.*)/,
+          "default" => /^(docs|fix|feat|chore|style|refactor|perf|test)(?:\((.*)\))?(!?)\: (.*)/,
           "angular" => /^(\w*)(?:\((.*)\))?(): (.*)/
         }
       end

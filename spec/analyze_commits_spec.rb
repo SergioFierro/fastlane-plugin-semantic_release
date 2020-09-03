@@ -19,7 +19,8 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
     it "should increment fix and return true" do
       commits = [
         "docs: ...|",
-        "fix: ...|"
+        "fix: ...|",
+        "fix: ..."
       ]
       test_analyze_commits(commits)
 
@@ -77,7 +78,7 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
           test_analyze_commits(commits)
 
           expect(execute_lane_test(match: 'v*')).to eq(true)
-          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("1.2.1")
+          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("1.2.0")
         end
       end
 
@@ -86,14 +87,14 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
           test_analyze_commits(commits)
 
           expect(execute_lane_test(match: 'v*', ignore_scopes: [])).to eq(true)
-          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("1.2.1")
+          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("1.2.0")
         end
 
         it "should skip a single scopes if it has been added to ignore_scopes" do
           test_analyze_commits(commits)
 
           expect(execute_lane_test(match: 'v*', ignore_scopes: ['android'])).to eq(true)
-          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("1.1.1")
+          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("1.1.0")
         end
 
         it "should skip multiple scopes if they have been added to ignore_scopes" do
@@ -153,7 +154,7 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
       test_analyze_commits(commits)
 
       expect(execute_lane_test(match: 'v*')).to eq(true)
-      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("1.0.10")
+      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("1.0.9")
     end
 
     describe "tags" do
@@ -194,15 +195,15 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
         "fix: ...",
         "fix: ...|codepush: ok",
         "docs: ...|codepush: ok",
-        "feat: ...|codepush: ok",
+        "feat(skip): ...|codepush: ok",
         "fix: ...|codepush: ok"
       ]
       allow(Fastlane::Actions::AnalyzeCommitsAction).to receive(:get_last_tag).and_return('v0.0.0-1-g71ce4d8')
       allow(Fastlane::Actions::AnalyzeCommitsAction).to receive(:get_commits_from_hash).and_return(commits)
 
       expect(execute_lane_test(match: 'v*')).to eq(true)
-      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("0.1.1")
-      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_LAST_INCOMPATIBLE_CODEPUSH_VERSION]).to eq("0.0.6")
+      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("0.0.1")
+      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_LAST_INCOMPATIBLE_CODEPUSH_VERSION]).to eq("0.0.1")
     end
 
     it "should accept only codepush: ok as codepush friendly commit" do
@@ -220,8 +221,8 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
       allow(Fastlane::Actions::AnalyzeCommitsAction).to receive(:get_commits_from_hash).and_return(commits)
 
       expect(execute_lane_test(match: 'v*')).to eq(true)
-      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("0.1.1")
-      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_LAST_INCOMPATIBLE_CODEPUSH_VERSION]).to eq("0.0.4")
+      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("0.1.0")
+      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_LAST_INCOMPATIBLE_CODEPUSH_VERSION]).to eq("0.0.1")
     end
 
     it "should docs, test, etc commits are codepush friendly automatically" do
@@ -242,8 +243,8 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
       allow(Fastlane::Actions::AnalyzeCommitsAction).to receive(:get_commits_from_hash).and_return(commits)
 
       expect(execute_lane_test(match: 'v*')).to eq(true)
-      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("0.2.1")
-      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_LAST_INCOMPATIBLE_CODEPUSH_VERSION]).to eq("0.0.3")
+      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("0.2.0")
+      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_LAST_INCOMPATIBLE_CODEPUSH_VERSION]).to eq("0.0.1")
     end
 
     describe "commit_format" do
@@ -379,7 +380,7 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
             }
           )
           expect(is_releasable).to eq(true)
-          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("3.2.2")
+          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("2.0.0")
         end
 
         it "should allow for arbetrary formatting with scope" do
@@ -396,7 +397,7 @@ describe Fastlane::Actions::AnalyzeCommitsAction do
             ignore_scopes: ['android']
           )
           expect(is_releasable).to eq(true)
-          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("2.1.1")
+          expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::RELEASE_NEXT_VERSION]).to eq("2.0.0")
         end
       end
     end
