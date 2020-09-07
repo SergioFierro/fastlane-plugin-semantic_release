@@ -204,7 +204,7 @@ describe Fastlane::Actions::ConventionalChangelogAction do
 
     describe 'hiding links if display_links is false' do
       commits = [
-        "docs: sub|body|long_hash|short_hash|Jiri Otahal|time",
+        "docs: [Jira-17823782]sub|body|long_hash|short_hash|Jiri Otahal|time",
         "fix: sub||long_hash|short_hash|Jiri Otahal|time"
       ]
 
@@ -229,8 +229,8 @@ describe Fastlane::Actions::ConventionalChangelogAction do
 
     describe 'hiding commits with skip:' do
       commits = [
-        "docs: sub|body|long_hash|short_hash|Jiri Otahal|time",
-        "fix: sub||long_hash|short_hash|Jiri Otahal|time",
+        "docs: [JIRA-17823782][JIRA-17823783]sub|body|long_hash|short_hash|Jiri Otahal|time",
+        "fix: sub||long_hash|short_hash|Jiri Otahal|time[JIRA-17823782]",
         "style: test",
         "skip: this should be skipped"
       ]

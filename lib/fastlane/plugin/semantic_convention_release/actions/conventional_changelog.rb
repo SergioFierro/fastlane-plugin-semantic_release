@@ -34,7 +34,7 @@ module Fastlane
         commits = get_commits_from_hash(
           hash: last_tag_hash,
           debug: params[:debug]
-        )
+        ).map { |string| string.gsub(/\[([^\)]+)\]/, "") }
         parsed = parse_commits(commits)
 
         commit_url = params[:commit_url]
