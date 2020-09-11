@@ -123,7 +123,7 @@ module Fastlane
           elsif commit[:release] == "minor" && !major_updated && !minor_updated
             next_minor += 1
             next_patch = 0
-            minor_updated = minor_updated
+            minor_updated = true
           elsif commit[:release] == "patch" && !major_updated && !minor_updated && !patch_updated
             next_patch += 1
             patch_updated = true
